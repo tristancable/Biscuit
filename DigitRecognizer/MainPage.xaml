@@ -5,23 +5,26 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="4*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="0" Grid.Column="0">
             <Label Text="Canvas go here"/>
         </Border>
-        <Border Grid.Row="0" Grid.Column="1">
+        
+        <Border Grid.Row="0" Grid.Column="1" Margin="10">
             <Label Text="Recognizer stuff go here"/>
         </Border>
-        <Border Grid.Row="1" Grid.ColumnSpan="2">
-            <Button Text="btn go here"/>
-        </Border>
+
+
+        <!--add Margin="10" to Canvas or something  ^^^ 
+         Margin="5 0 15 0" vvv-->
+        <Button Text="Clear Canvas" Clicked="OnClearCanvas" FontSize="18" Grid.Row="1" Grid.ColumnSpan="2" WidthRequest="150"/>
     </Grid>
 
 </ContentPage>
