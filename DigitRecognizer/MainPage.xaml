@@ -3,6 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DigitRecognizer.MainPage">
 
+    <Grid>
+        <GraphicsView x:Name="CanvasView"
+                      Drawable="{x:Static local:MainPage.DrawableInstance}"
+                      HeightRequest="500"
+                      WidthRequest="500"
+                      BackgroundColor="White"
+                      Touch += "OnCanvasTouched"/>
+    </Grid>
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
