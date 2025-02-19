@@ -14,7 +14,7 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0">
+        <Border Grid.Row="0" Grid.Column="0" Margin="10">
             <GraphicsView x:Name="CanvasView"
                           Drawable="{x:Static local:MainPage.DrawableInstance}"
                           BackgroundColor="White"
@@ -30,7 +30,7 @@
 
         <!--add Margin="10" to Canvas or something  ^^^ 
          Margin="5 0 15 0" vvv-->
-        <Button Text="Clear Canvas" Clicked="OnClearCanvas" FontSize="18" Grid.Row="1" Grid.ColumnSpan="2" WidthRequest="150"/>
+        <Button Text="Clear Canvas" Clicked="OnClearClicked" FontSize="18" Grid.Row="1" Grid.ColumnSpan="2" WidthRequest="150" Margin="10"/>
     </Grid>
 
 </ContentPage>
