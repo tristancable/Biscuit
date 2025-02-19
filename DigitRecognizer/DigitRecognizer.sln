@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.13.35806.99 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitRecognizer", "DigitRecognizer.csproj", "{1DB12104-A216-4383-AD17-2441C0D78AE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitRecognizer", "DigitRecognizer.csproj", "{F89129B2-55A8-4E3E-A13D-B58ABA453730}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1DB12104-A216-4383-AD17-2441C0D78AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DB12104-A216-4383-AD17-2441C0D78AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DB12104-A216-4383-AD17-2441C0D78AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DB12104-A216-4383-AD17-2441C0D78AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F89129B2-55A8-4E3E-A13D-B58ABA453730}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B19BF9EA-FF0B-4E86-B6A4-00C517458368}
 	EndGlobalSection
 EndGlobal
