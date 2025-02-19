@@ -8,7 +8,7 @@
     Title="DigitRecognizer">
 
     <ShellContent
-        Title="Home"
+        Title="Digit Recognizer"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
