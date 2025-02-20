@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Controls;
+﻿using DigitRecognizer.Services;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System;
 
