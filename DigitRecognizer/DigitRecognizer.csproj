@@ -65,4 +65,8 @@
 		<PackageReference Include="TensorFlow.NET" Version="0.150.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="MNIST_TestData\" />
+	</ItemGroup>
+
 </Project>
