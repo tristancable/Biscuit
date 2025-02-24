@@ -24,7 +24,9 @@
         </Border>
         
         <Border Grid.Row="0" Grid.Column="1" Margin="10">
-            <Label Text="Recognizer stuff go here"/>
+            <ScrollView>
+                <Label x:Name="NeuralNetwork" Text="Neural Network"/>
+            </ScrollView>
         </Border>
 
 
