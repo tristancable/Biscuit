@@ -21,24 +21,27 @@
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
+        canvas.FillColor = Colors.Black;
+        float brushSize = 5; // Adjust size as needed
+
         foreach (var line in _lines)
         {
-            if (line.Count > 1)
+            for (int i = 1; i < line.Count; i++)
             {
-                // Create a PathF to draw the line
-                var path = new PathF();
-                path.MoveTo(line[0].X, line[0].Y); // Start at the first point
+                var p1 = line[i - 1];
+                var p2 = line[i];
 
-                // Add all points to the path
-                for (int i = 1; i < line.Count; i++)
+                float distance = (float)Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
+                int steps = Math.Max(1, (int)(distance / (brushSize * 0.5))); // Ensures at least 1 step
+
+                for (int j = 0; j <= steps; j++)
                 {
-                    path.LineTo(line[i].X, line[i].Y);
-                }
+                    float t = j / (float)steps;
+                    float x = p1.X + (p2.X - p1.X) * t;
+                    float y = p1.Y + (p2.Y - p1.Y) * t;
 
-                // Draw the path
-                canvas.StrokeColor = Colors.Black;
-                canvas.StrokeSize = 10;
-                canvas.DrawPath(path);
+                    canvas.FillCircle(x, y, brushSize);
+                }
             }
         }
     }
