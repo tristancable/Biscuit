@@ -4,60 +4,68 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NumSharp;
 using Tensorflow;
+using Tensorflow.NumPy;
+using static Tensorflow.Binding;
 namespace DigitRecognizer.Services
 {
     public static class TensorFlowService
     {
-        public static void Start()
+        private static Tensor x, y;
+        private static Tensor logits, loss, optimizer;
+        private static Session sess;
+        public static void Initialize()
         {
-            var (xTrain, yTrain, xTest, yTest) = LoadMNIST();
+            BuildGraph();
+            sess = tf.Session();
+            sess.run(tf.global_variables_initializer());
         }
-        private static (NDArray, NDArray, NDArray, NDArray) LoadMNIST()
+        private static void BuildGraph()
         {
-            string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MNIST_TestData");
-            string trainImagesPath = Path.Combine(dataDir, "train-images-idx3-ubyte");
-            string trainLabelsPath = Path.Combine(dataDir, "train-labels-idx1-ubyte");
-            string testImagesPath = Path.Combine(dataDir, "t10k-images-idx3-ubyte");
-            string testLabelsPath = Path.Combine(dataDir, "t10k-labels-idx1-ubyte");
-            if (!File.Exists(trainImagesPath) || !File.Exists(trainLabelsPath) || !File.Exists(testImagesPath) || !File.Exists(testLabelsPath))
+            // Placeholders
+            x = tf.placeholder(TF_DataType.TF_FLOAT, new Shape(-1, 28, 28));
+            y = tf.placeholder(TF_DataType.TF_INT32, new Shape(-1));
+            // Flatten
+            var inputLayer = tf.reshape(x, new Shape(-1, 784));
+            // First Dense Layer
+            var W1 = tf.Variable(tf.random.truncated_normal(new Shape(784, 128), 0.1f));
+            var b1 = tf.Variable(tf.zeros(new Shape(128)));
+            var hiddenLayer = tf.nn.relu(tf.matmul(inputLayer, W1) + b1);
+            // Output
+            var W2 = tf.Variable(tf.random.truncated_normal(new Shape(128, 10), 0.1f));
+            var b2 = tf.Variable(tf.zeros(new Shape(10)));
+            logits = tf.matmul(hiddenLayer, W2) + b2;
+            // Loss
+            loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, logits));
+            // Optimizer
+            var learningRate = 0.01f;
+            optimizer = tf.train.AdamOptimizer(learningRate).minimize(loss);
+        }
+        public static void Train(NDArray xTrain, NDArray yTrain, int epochs, int batchSize)
+        {
+            long numBatches = xTrain.shape[0] / batchSize;
+            for (int epoch = 0; epoch < epochs; epoch++)
             {
-                throw new FileNotFoundException("MNIST dataset files are missing in MNIST_TestData.");
-            }
-            var xTrain = ReadImages(trainImagesPath);
-            var yTrain = ReadLabels(trainLabelsPath);
-            var xTest = ReadImages(testImagesPath);
-            var yTest = ReadLabels(testLabelsPath);
-            return (xTrain, yTrain, xTest, yTest);
-        }
-        private static NDArray ReadImages(string path)
-        {
-            using (var stream = new FileStream(path, FileMode.Open))
-            using (var reader = new BinaryReader(stream))
-            {
-                int numImages = ReverseBytes(reader.ReadInt32());
-                int rows = ReverseBytes(reader.ReadInt32());
-                int columns = ReverseBytes(reader.ReadInt32());
-                byte[] buffer = reader.ReadBytes(numImages * rows * columns);
-                return np.array(buffer).reshape(numImages, rows, columns).astype(NPTypeCode.Float) / 255.0f;
+                for (int i = 0; i < numBatches; i++)
+                {
+                    var (batchX, batchY) = GetBatch(xTrain, yTrain, batchSize, i);
+                    sess.run(optimizer, new FeedItem(x, batchX), new FeedItem(y, batchY));
+                }
+                // Loss after epoch
+                var trainLoss = sess.run(loss, new FeedItem(x, xTrain), new FeedItem(y, yTrain));
+                Console.WriteLine($"Epoch {epoch + 1}/{epochs}, Loss: {trainLoss}");
             }
         }
-        private static NDArray ReadLabels(string path)
+        public static NDArray Predict(NDArray input)
         {
-            using (var stream = new FileStream(path, FileMode.Open))
-            using (var reader = new BinaryReader(stream))
-            {
-                int numLabels = ReverseBytes(reader.ReadInt32());
-                byte[] buffer = reader.ReadBytes(numLabels);
-                return np.array(buffer).astype(NPTypeCode.Int32);
-            }
+            var predictions = sess.run(tf.nn.softmax(logits), new FeedItem(x, input));
+            return np.argmax(predictions, 1);
         }
-        private static int ReverseBytes(int value)
+        private static (NDArray, NDArray) GetBatch(NDArray images, NDArray labels, int batchSize, int batchIndex)
         {
-            byte[] bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            return BitConverter.ToInt32(bytes, 0);
+            long start = batchIndex * batchSize;
+            long end = Math.Min(start + batchSize, images.shape[0]);
+            return (images[$"{start}:{end}"], labels[$"{start}:{end}"]);
         }
     }
 }
