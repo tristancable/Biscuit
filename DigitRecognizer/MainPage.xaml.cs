@@ -1,73 +1,102 @@
-﻿using DigitRecognizer.Services;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls.Xaml;
 using System;
+using System.Linq;
 
 namespace DigitRecognizer
 {
     public partial class MainPage : ContentPage
     {
         public static DrawingCanvas DrawableInstance = new DrawingCanvas();
-        private bool isDrawing = false; // Track if we are in the middle of a drawing session
 
         public MainPage()
         {
             InitializeComponent();
             CanvasView.Drawable = DrawableInstance;
-
-            // Subscribe to the interaction events for the canvas
-            CanvasView.StartInteraction += OnCanvasPointerPressed;
-            CanvasView.DragInteraction += OnCanvasPointerMoved;
-            CanvasView.EndInteraction += OnCanvasPointerReleased;
         }
 
+        private PointF _lastPoint; // Track the last touch point
+        private bool _isDragging = false; // Track if the user is dragging
+
+        // Start Interaction - Touch Pressed
         private void OnCanvasPointerPressed(object sender, TouchEventArgs e)
         {
-            // Handle touch start: start a new line without clearing the canvas
-            var touchPoint = e.Touches[0];
+            var touchPoint = e.Touches.FirstOrDefault();
             if (touchPoint != null)
             {
-                // If we're not already drawing, start a new line
-                if (!isDrawing)
-                {
-                    isDrawing = true; // Mark that we are now drawing
-                    DrawableInstance.StartNewLine(); // Start a new line (modify this method as needed)
-                }
+                var point = new PointF((float)touchPoint.X, (float)touchPoint.Y);
+                _lastPoint = point; // Save the first point when the user clicks
+                _isDragging = false; // Initially not dragging
 
-                // Add the first point of the new line
-                DrawableInstance.AddPoint(new PointF((float)touchPoint.X, (float)touchPoint.Y));
-                CanvasView.Invalidate(); // Refresh the drawing
+                // Start a new line or draw a dot
+                DrawableInstance.StartNewLine(point); // Start the line at the clicked position
+
+                // Draw a dot if we are not dragging (just clicking)
+                DrawableInstance.DrawDot(point); // Draw a dot at the clicked position
+                CanvasView.Invalidate(); // Redraw immediately
             }
         }
 
+        // Drag Interaction - Touch Moved (Drawing while dragging)
         private void OnCanvasPointerMoved(object sender, TouchEventArgs e)
         {
-            // Handle touch move: continue the current line
-            var touchPoint = e.Touches[0];
-            if (touchPoint != null && isDrawing)
-            {
-                DrawableInstance.AddPoint(new PointF((float)touchPoint.X, (float)touchPoint.Y));
-                CanvasView.Invalidate(); // Update the drawing as user moves finger
-            }
-        }
-
-        private void OnCanvasPointerReleased(object sender, TouchEventArgs e)
-        {
-            // Handle pointer release: finish the current line
-            var touchPoint = e.Touches[0];
+            var touchPoint = e.Touches.FirstOrDefault();
             if (touchPoint != null)
             {
-                // Add the final point to the current line
-                DrawableInstance.AddPoint(new PointF((float)touchPoint.X, (float)touchPoint.Y));
-                isDrawing = false; // Mark that the drawing session is finished
-                CanvasView.Invalidate(); // Finalize the drawing
+                var point = new PointF((float)touchPoint.X, (float)touchPoint.Y);
+
+                // Check if the user has moved a sufficient distance to start drawing a line
+                if (!_isDragging && (Math.Abs(point.X - _lastPoint.X) > 5 || Math.Abs(point.Y - _lastPoint.Y) > 5))
+                {
+                    _isDragging = true; // User has started dragging
+                }
+
+                // If dragging, add points to the line
+                if (_isDragging)
+                {
+                    DrawableInstance.AddPoint(point); // Add the point to the current line
+                }
+
+                CanvasView.Invalidate(); // Redraw continuously while dragging
             }
         }
 
-        private void OnClearClicked(object sender, EventArgs e)
+        // End Interaction - Touch Released (Finish drawing when released)
+        private void OnCanvasPointerReleased(object sender, TouchEventArgs e)
+        {
+            if (_isDragging)
+            {
+                DrawableInstance.FinishLine(); // Finish the current line if we were dragging
+            }
+
+            CanvasView.Invalidate(); // Redraw after touch is released
+        }
+
+        // Clear the canvas
+        public void OnClearClicked(object sender, EventArgs e)
         {
             DrawableInstance.Clear();
-            CanvasView.Invalidate(); // Clear the canvas
+            CanvasView.Invalidate();
+        }
+
+        // Handle brush size changes
+        public void OnBrushSizeChanged(object sender, EventArgs e)
+        {
+            var slider = (Slider)sender;
+            DrawableInstance.SetBrushSize((int)slider.Value);
+        }
+
+        // Activate the pencil tool
+        private void OnPencilClicked(object sender, EventArgs e)
+        {
+            DrawableInstance.SetDrawingMode(true);
+        }
+
+        // Activate the eraser tool
+        private void OnEraserClicked(object sender, EventArgs e)
+        {
+            DrawableInstance.SetDrawingMode(false);
         }
     }
 }
