@@ -65,15 +65,6 @@
         }
     }
 
-    // Add a point to the current line
-    public void AddPoint(PointF point)
-    {
-        if (!isCircleMode)
-        {
-            _currentLine?.Points.Add(point);
-        }
-    }
-
     // Finish the line and add it to the list of lines
     public void FinishLine()
     {
@@ -81,6 +72,15 @@
         {
             _lines.Add(_currentLine);
             _currentLine = null; // Reset for the next line
+        }
+    }
+
+    // Add a point to the current line
+    public void AddPoint(PointF point)
+    {
+        if (!isCircleMode)
+        {
+            _currentLine?.Points.Add(point);
         }
     }
 
@@ -96,7 +96,6 @@
         // Draw the dot with the same size as the brush size
         _circles.Add(new Circle(point, currentBrushSize, currentBrushSize, isEraser));
     }
-
 
     // Clear all lines and circles
     public void Clear()

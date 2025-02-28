@@ -13,7 +13,7 @@ namespace DigitRecognizer
         public MainPage()
         {
             InitializeComponent();
-            CanvasView.Drawable = DrawableInstance;
+            CanvasView.Drawable = (Microsoft.Maui.Graphics.IDrawable)DrawableInstance;
         }
 
         private PointF _lastPoint; // Track the last touch point
@@ -34,6 +34,7 @@ namespace DigitRecognizer
 
                 // Draw a dot if we are not dragging (just clicking)
                 DrawableInstance.DrawDot(point); // Draw a dot at the clicked position
+                //DrawableInstance.AddPoint(point);
                 CanvasView.Invalidate(); // Redraw immediately
             }
         }
