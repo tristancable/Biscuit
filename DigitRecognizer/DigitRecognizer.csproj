@@ -60,13 +60,11 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-		<PackageReference Include="NumSharp" Version="0.30.0" />
-		<PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.16.0" />
-		<PackageReference Include="TensorFlow.NET" Version="0.150.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="MNIST_TestData\" />
+	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>
