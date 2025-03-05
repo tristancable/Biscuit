@@ -64,7 +64,6 @@
 
 	<ItemGroup>
 	  <Folder Include="MNIST_TestData\" />
-	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>
