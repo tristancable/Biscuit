@@ -1,4 +1,6 @@
 ﻿namespace DigitRecognizer.Services
+
+
 {
     public class Image
     {
@@ -26,6 +28,7 @@
             this.pixelValues = new double[numPixels];
             this.label = label;
         }
+
 
         public int GetFlatIndex(int x, int y)
         {
@@ -59,39 +62,39 @@
             return interpolatedValue;
         }
 
-        public Texture2D ConvertToTexture2D()
-        {
-            Texture2D texture = new Texture2D(size, size);
-            ConvertToTexture2D(ref texture);
-            return texture;
-        }
+        //public Texture2D ConvertToTexture2D()
+        //{
+        //    Texture2D texture = new Texture2D(size, size);
+        //    ConvertToTexture2D(ref texture);
+        //    return texture;
+        //}
 
-        public void ConvertToTexture2D(ref Texture2D texture)
-        {
-            if (texture == null || texture.width != size || texture.height != size)
-            {
-                texture = new Texture2D(size, size);
-            }
-            texture.filterMode = FilterMode.Point;
+        //public void ConvertToTexture2D(ref Texture2D texture)
+        //{
+        //    if (texture == null || texture.width != size || texture.height != size)
+        //    {
+        //        texture = new Texture2D(size, size);
+        //    }
+        //    texture.filterMode = FilterMode.Point;
 
-            Color[] colors = new Color[numPixels];
-            for (int i = 0; i < numPixels; i++)
-            {
-                if (greyscale)
-                {
-                    float v = (float)pixelValues[i];
-                    colors[i] = new Color(v, v, v);
-                }
-                else
-                {
-                    float r = (float)pixelValues[i * 3 + 0];
-                    float g = (float)pixelValues[i * 3 + 1];
-                    float b = (float)pixelValues[i * 3 + 2];
-                    colors[i] = new Color(r, g, b);
-                }
-            }
-            texture.SetPixels(colors);
-            texture.Apply();
-        }
+        //    Color[] colors = new Color[numPixels];
+        //    for (int i = 0; i < numPixels; i++)
+        //    {
+        //        if (greyscale)
+        //        {
+        //            float v = (float)pixelValues[i];
+        //            colors[i] = new Color(v, v, v);
+        //        }
+        //        else
+        //        {
+        //            float r = (float)pixelValues[i * 3 + 0];
+        //            float g = (float)pixelValues[i * 3 + 1];
+        //            float b = (float)pixelValues[i * 3 + 2];
+        //            colors[i] = new Color(r, g, b);
+        //        }
+        //    }
+        //    texture.SetPixels(colors);
+        //    texture.Apply();
+        //}
     }
 }

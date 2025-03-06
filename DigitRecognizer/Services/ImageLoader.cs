@@ -4,10 +4,10 @@ namespace DigitRecognizer.Services
 {
     public class ImageLoader
     {
-        [SerializeField] int imageSize = 28;
-        [SerializeField] bool greyscale = true;
-        [SerializeField] DataFile[] dataFiles;
-        [SerializeField] string[] labelNames;
+        int imageSize = 28;
+        bool greyscale = true;
+        DataFile[] dataFiles;
+        string[] labelNames;
         Image[] images;
 
         public int NumImages => images.Length;
@@ -46,7 +46,9 @@ namespace DigitRecognizer.Services
 
             foreach (var file in dataFiles)
             {
-                Image[] images = LoadImages(file.imageFile.bytes, file.labelFile.bytes);
+                byte[] imageData = File.ReadAllBytes(file.imageFilePath);
+                byte[] labelData = File.ReadAllBytes(file.labelFilePath);
+                Image[] images = LoadImages(imageData, labelData);
                 allImages.AddRange(images);
             }
 
@@ -94,8 +96,8 @@ namespace DigitRecognizer.Services
         [System.Serializable]
         public struct DataFile
         {
-            public TextAsset imageFile;
-            public TextAsset labelFile;
+            public string imageFilePath;
+            public string labelFilePath;
         }
     }
 }

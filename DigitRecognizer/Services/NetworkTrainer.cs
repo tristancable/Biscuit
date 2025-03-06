@@ -11,7 +11,6 @@ namespace DigitRecognizer.Services
 
         public HyperParameters hyperParameters;
 
-        [Space()]
         public TrainingSessionInfo sessionInfo;
 
         ImageLoader imageLoader;
@@ -67,7 +66,7 @@ namespace DigitRecognizer.Services
 
         void LoadData()
         {
-            imageLoader = FindObjectOfType<ImageLoader>();
+            imageLoader = new ImageLoader();
             allData = imageLoader.GetAllData();
             (trainingData, validationData) = DataSetHelper.SplitData(allData, trainingSplit);
             trainingBatches = DataSetHelper.CreateMiniBatches(trainingData, hyperParameters.minibatchSize);
