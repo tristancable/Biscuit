@@ -31,6 +31,10 @@
                 <StackLayout Grid.Row="0" Orientation="Horizontal" BackgroundColor="DarkGray" Padding="5">
                     <ImageButton Source="brush.png" Clicked="OnPencilClicked" WidthRequest="40" HeightRequest="40"/>
                     <ImageButton Source="ink_eraser.png" Clicked="OnEraserClicked" WidthRequest="40" HeightRequest="40"/>
+                    <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="Center">
+                        <Button Text="Undo" Clicked="OnUndoClicked" FontSize="18" WidthRequest="150" Margin="5"/>
+                        <Button Text="Redo" Clicked="OnRedoClicked" FontSize="18" WidthRequest="150" Margin="5"/>
+                    </StackLayout>
 
                     <!-- Brush Size Slider -->
                     <Slider Minimum="1" Maximum="50" Value="5" 
@@ -46,7 +50,6 @@
                               StartInteraction="OnCanvasPointerPressed"
                               DragInteraction="OnCanvasPointerMoved"
                               EndInteraction="OnCanvasPointerReleased"/>
-
             </Grid>
         </Border>
 

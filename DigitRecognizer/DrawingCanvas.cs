@@ -1,11 +1,15 @@
 ﻿public class DrawingCanvas : IDrawable
 {
     private List<Line> _lines = new List<Line>();
-    private List<Circle> _circles = new List<Circle>(); // Store circles
+    private List<Circle> _circles = new List<Circle>();
     private Line _currentLine;
     private bool isEraser = false;
     private int currentBrushSize = 5;
-    public bool isCircleMode = false; // New flag for circle mode
+    private bool isCircleMode = false;
+
+    // Undo/Redo stacks
+    private Stack<UndoAction> undoStack = new Stack<UndoAction>();
+    private Stack<UndoAction> redoStack = new Stack<UndoAction>();
 
     public class Line
     {
@@ -36,81 +40,140 @@
         }
     }
 
-    // Set the drawing mode (pencil, eraser, or circle)
     public void SetDrawingMode(bool drawing)
     {
         isEraser = !drawing;
-        isCircleMode = false; // Reset circle mode if switching to pencil/eraser
+        isCircleMode = false;
     }
 
-    // Set circle mode
     public void SetCircleMode()
     {
         isCircleMode = true;
     }
 
-    // Set brush size
     public void SetBrushSize(int size)
     {
         currentBrushSize = size;
     }
 
-    // Start a new line
     public void StartNewLine(PointF startPoint)
     {
-        if (!isCircleMode) // Only start new line if not in circle mode
+        if (!isCircleMode)
         {
             _currentLine = new Line(currentBrushSize, isEraser);
             _currentLine.Points.Add(startPoint);
         }
     }
 
-    // Finish the line and add it to the list of lines
     public void FinishLine()
     {
         if (_currentLine != null && _currentLine.Points.Count > 0)
         {
             _lines.Add(_currentLine);
-            _currentLine = null; // Reset for the next line
+            undoStack.Push(new UndoAction { ActionType = ActionType.Line, Line = _currentLine });
+            _currentLine = null;
         }
     }
 
-    // Add a point to the current line
     public void AddPoint(PointF point)
     {
         if (!isCircleMode)
         {
             _currentLine?.Points.Add(point);
+
+            if (isEraser)
+            {
+                EraseCircle(point);
+            }
+        }
+        else
+        {
+            if (isEraser)
+            {
+                EraseCircle(point);
+            }
+            else
+            {
+                DrawDot(point);
+            }
         }
     }
 
-    // Draw a circle at the clicked position
+    private void EraseCircle(PointF point)
+    {
+        var radius = currentBrushSize / 2;
+
+        _circles.RemoveAll(c =>
+            Math.Sqrt(Math.Pow(c.Center.X - point.X, 2) + Math.Pow(c.Center.Y - point.Y, 2)) < radius);
+    }
+
     public void DrawCircle(PointF center)
     {
-        _circles.Add(new Circle(center, currentBrushSize, currentBrushSize, isEraser));
+        var circle = new Circle(center, currentBrushSize, currentBrushSize, isEraser);
+        _circles.Add(circle);
+
+        undoStack.Push(new UndoAction { ActionType = ActionType.Circle, Circle = circle });
     }
 
-    // Draw a dot at the clicked position
     public void DrawDot(PointF point)
     {
-        // Draw the dot with the same size as the brush size
-        _circles.Add(new Circle(point, currentBrushSize, currentBrushSize, isEraser));
+        var circle = new Circle(point, currentBrushSize, currentBrushSize, isEraser);
+        _circles.Add(circle);
+
+        undoStack.Push(new UndoAction { ActionType = ActionType.Circle, Circle = circle });
     }
 
-    // Clear all lines and circles
     public void Clear()
     {
         _lines.Clear();
         _circles.Clear();
+        undoStack.Clear();
+        redoStack.Clear();
     }
 
-    // Draw the lines and circles on the canvas
+    public void Undo()
+    {
+        if (undoStack.Count > 0)
+        {
+            var lastAction = undoStack.Pop();
+
+            if (lastAction.ActionType == ActionType.Line)
+            {
+                _lines.Remove(lastAction.Line);
+            }
+            else if (lastAction.ActionType == ActionType.Circle)
+            {
+                _circles.Remove(lastAction.Circle);
+            }
+
+            redoStack.Push(lastAction);
+        }
+    }
+
+    public void Redo()
+    {
+        if (redoStack.Count > 0)
+        {
+            var lastAction = redoStack.Pop();
+
+            if (lastAction.ActionType == ActionType.Line)
+            {
+                _lines.Add(lastAction.Line);
+            }
+            else if (lastAction.ActionType == ActionType.Circle)
+            {
+                _circles.Add(lastAction.Circle);
+            }
+
+            undoStack.Push(lastAction);
+        }
+    }
+
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        // Draw all lines
         foreach (var line in _lines)
         {
-            if (line.Points.Count < 2) continue; // Ensure at least two points to draw
+            if (line.Points.Count < 2) continue;
 
             canvas.StrokeSize = line.BrushSize;
             canvas.StrokeColor = line.IsEraser ? Colors.LightGray : Colors.Black;
@@ -122,15 +185,13 @@
             }
         }
 
-        // Draw all circles
         foreach (var circle in _circles)
         {
-            canvas.FillColor = circle.IsEraser ? Colors.LightGray : Colors.Black;  // Set fill color
+            canvas.FillColor = circle.IsEraser ? Colors.LightGray : Colors.Black;
             canvas.FillEllipse(circle.Center.X - (circle.Radius / 2), circle.Center.Y - (circle.Radius / 2),
                    circle.Radius, circle.Radius);
         }
 
-        // Optionally, draw the current line while the user is dragging (if there is one)
         if (_currentLine != null && _currentLine.Points.Count > 1)
         {
             canvas.StrokeSize = _currentLine.BrushSize;
@@ -143,5 +204,18 @@
                                _currentLine.Points[i].X, _currentLine.Points[i].Y);
             }
         }
+    }
+
+    public class UndoAction
+    {
+        public ActionType ActionType { get; set; }
+        public Line Line { get; set; }
+        public Circle Circle { get; set; }
+    }
+
+    public enum ActionType
+    {
+        Line,
+        Circle
     }
 }
