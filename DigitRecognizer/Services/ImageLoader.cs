@@ -15,9 +15,11 @@ namespace DigitRecognizer.Services
         public int OutputSize => labelNames.Length;
         public string[] LabelNames => labelNames;
 
-        // imageFilePath = "MNIST_TestData/t10k-images-idx3-ubyte", labelFilePath = "MNIST_TestData/t10k-labels-idx1-ubyte"
+        DataFile[] files = new[]  {
+            new DataFile {imageFilePath = "MNIST_TestData/t10k-images-idx3-ubyte", labelFilePath = "MNIST_TestData/t10k-labels-idx1-ubyte" }
+        };
 
-        public ImageLoader(DataFile[] files)
+        public ImageLoader()
         {
             dataFiles = files ?? throw new ArgumentNullException(nameof(files));
             images = LoadImages();
