@@ -53,6 +53,24 @@ namespace DigitRecognizer.Services
 
                 byte[] imageData = File.ReadAllBytes(file.imageFilePath);
                 byte[] labelData = File.ReadAllBytes(file.labelFilePath);
+
+
+                int numImages = imageData.Length / (imageSize * imageSize); // Assuming grayscale, 28x28 images
+                int numLabels = labelData.Length; // Each label is 1 byte
+                if (numLabels > numImages)
+                {
+                    int excess = numLabels - numImages;
+
+                    // Shift the labels forward by trimming the first `excess` labels
+                    byte[] trimmedLabels = new byte[numImages];
+                    Array.Copy(labelData, excess, trimmedLabels, 0, numImages);
+
+                    labelData = trimmedLabels; // Replace label data with shifted labels
+                    numLabels = numImages;
+
+                    Console.WriteLine($"⚠️ Trimmed first {excess} labels. New label count: {numLabels}");
+                }
+
                 allImages.AddRange(LoadImages(imageData, labelData));
             }
 
@@ -66,25 +84,45 @@ namespace DigitRecognizer.Services
             int numImages = imageData.Length / bytesPerImage;
             int numLabels = labelData.Length;
 
-            if (numImages != numLabels)
-                throw new InvalidOperationException($"Number of images ({numImages}) doesn't match number of labels ({numLabels}).");
 
-            int dataSetSize = Math.Min(numImages, numLabels);
-            var images = new Image[dataSetSize];
+            if (numLabels > numImages)
+            {
+                int excess = numLabels - numImages;
+
+                // Shift the labels forward by trimming the first `excess` labels
+                byte[] trimmedLabels = new byte[numImages];
+                Array.Copy(labelData, excess, trimmedLabels, 0, numImages);
+
+                labelData = trimmedLabels;
+                numLabels = numImages;
+
+                Console.WriteLine($"Trimmed first {excess} labels. New label count: {numLabels}");
+            }
+
+
+            if (numImages != numLabels)
+            {
+                throw new InvalidOperationException($"Number of images ({numImages}) doesn't match number of labels ({numLabels})");
+            }
+
+            List<Image> images = new List<Image>();
 
             double[] allPixelValues = new double[imageData.Length];
-            Parallel.For(0, imageData.Length, i => allPixelValues[i] = imageData[i] / 255.0);
-
-            Parallel.For(0, dataSetSize, imageIndex =>
+            for (int i = 0; i < imageData.Length; i++)
             {
-                int byteOffset = imageIndex * bytesPerImage;
+                allPixelValues[i] = imageData[i] / 255.0;
+            }
+
+            for (int i = 0; i < numImages; i++)
+            {
+                int byteOffset = i * bytesPerImage;
                 double[] pixelValues = new double[bytesPerImage];
                 Array.Copy(allPixelValues, byteOffset, pixelValues, 0, bytesPerImage);
 
-                images[imageIndex] = new Image(imageSize, greyscale, pixelValues, labelData[imageIndex]);
-            });
+                images.Add(new Image(imageSize, greyscale, pixelValues, labelData[i]));
+            }
 
-            return images;
+            return images.ToArray();
         }
 
         [Serializable]
