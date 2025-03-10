@@ -3,17 +3,20 @@ using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Controls.Xaml;
 using System;
 using System.Linq;
+using DigitRecognizer.Services;
 
 namespace DigitRecognizer
 {
     public partial class MainPage : ContentPage
     {
         public static DrawingCanvas DrawableInstance = new DrawingCanvas();
+        public static NeuralNetwork network;
 
         public MainPage()
         {
             InitializeComponent();
             CanvasView.Drawable = (Microsoft.Maui.Graphics.IDrawable)DrawableInstance;
+            //network = NetworkSaveData.LoadNetworkFromFile("C:\\Neumont\\Q6\\PRO200\\Biscuit\\DigitRecognizer\\Resources\\MNIST Model\\Mnist Net.json");
         }
 
         private PointF _lastPoint;

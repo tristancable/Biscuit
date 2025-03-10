@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-
+using System.Diagnostics;
 namespace DigitRecognizer.Services
 {
     [System.Serializable]
@@ -38,7 +38,9 @@ namespace DigitRecognizer.Services
 
         public static NeuralNetwork LoadNetworkFromData(string loadedData)
         {
-            return JsonSerializer.Deserialize<NetworkSaveData>(loadedData).LoadNetwork();
+            NetworkSaveData data = JsonSerializer.Deserialize<NetworkSaveData>(loadedData);
+            Console.WriteLine(data);
+            return data.LoadNetwork();
         }
 
         public static string SerializeNetwork(NeuralNetwork network)
