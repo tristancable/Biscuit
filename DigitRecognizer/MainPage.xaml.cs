@@ -7,12 +7,13 @@ namespace DigitRecognizer
     {
         public static DrawingCanvas DrawableInstance = new DrawingCanvas();
         public static NeuralNetwork network;
+        private string currentDirectory = $"{AppContext.BaseDirectory}\\Resources\\MNIST Model\\Mnist Net.json";
 
         public MainPage()
         {
             InitializeComponent();
             CanvasView.Drawable = (Microsoft.Maui.Graphics.IDrawable)DrawableInstance;
-            network = NetworkSaveData.LoadNetworkFromFile("C:\\Neumont\\Q6\\PRO200\\Biscuit\\DigitRecognizer\\Resources\\MNIST Model\\Mnist Net.json");
+            network = NetworkSaveData.LoadNetworkFromFile(currentDirectory);
         }
 
         private PointF _lastPoint;
