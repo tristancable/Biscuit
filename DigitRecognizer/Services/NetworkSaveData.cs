@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
-
+using System.Diagnostics;
+using Newtonsoft.Json;
 namespace DigitRecognizer.Services
 {
     [System.Serializable]
@@ -38,7 +39,9 @@ namespace DigitRecognizer.Services
 
         public static NeuralNetwork LoadNetworkFromData(string loadedData)
         {
-            return JsonSerializer.Deserialize<NetworkSaveData>(loadedData).LoadNetwork();
+            NetworkSaveData data = JsonConvert.DeserializeObject<NetworkSaveData>(loadedData);
+            Console.WriteLine(data);
+            return data.LoadNetwork();
         }
 
         public static string SerializeNetwork(NeuralNetwork network)
@@ -54,7 +57,7 @@ namespace DigitRecognizer.Services
                 saveData.connections[i].biases = network.layers[i].biases;
                 saveData.connections[i].activationType = network.layers[i].activation.GetActivationType();
             }
-            return JsonSerializer.Serialize(saveData);
+            return JsonConvert.SerializeObject(saveData);
         }
 
         public static void SaveToFile(string networkSaveString, string path)

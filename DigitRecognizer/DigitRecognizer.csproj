@@ -57,18 +57,41 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="MNIST_TestData\t10k-images-idx3-ubyte" />
+	  <None Remove="MNIST_TestData\t10k-labels-idx1-ubyte" />
+	  <None Remove="MNIST_TestData\train-images-idx3-ubyte" />
+	  <None Remove="MNIST_TestData\train-labels-idx1-ubyte" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.40" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
 		<PackageReference Include="NumSharp" Version="0.30.0" />
 		<PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.16.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
 		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
 		<PackageReference Include="TensorFlow.NET" Version="0.150.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="MNIST_TestData\" />
+	  <Content Include="MNIST_TestData\t10k-images-idx3-ubyte">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="MNIST_TestData\t10k-labels-idx1-ubyte">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="MNIST_TestData\train-images-idx3-ubyte">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="MNIST_TestData\train-labels-idx1-ubyte">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Include="Resources\MNIST Model\Mnist Net.json" />
 	</ItemGroup>
 
 </Project>

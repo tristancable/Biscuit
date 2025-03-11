@@ -67,7 +67,7 @@
 
         <Border Grid.Row="1" Grid.Column="1" Margin="10">
             <ScrollView>
-                <Label x:Name="NeuralNetwork" Text="Neural Network"/>
+                <Label x:Name="NeuralNetwork" Text="Prediction"></Label>
             </ScrollView>
         </Border>
 

@@ -1,19 +1,19 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Controls.Xaml;
-using System;
-using System.Linq;
-
+﻿using System.Diagnostics;
+using DigitRecognizer.Services;
+using SkiaSharp;
 namespace DigitRecognizer
 {
     public partial class MainPage : ContentPage
     {
         public static DrawingCanvas DrawableInstance = new DrawingCanvas();
+        public static NeuralNetwork network;
+        private string currentDirectory = $"{AppContext.BaseDirectory}\\Resources\\MNIST Model\\Mnist Net.json";
 
         public MainPage()
         {
             InitializeComponent();
             CanvasView.Drawable = (Microsoft.Maui.Graphics.IDrawable)DrawableInstance;
+            network = NetworkSaveData.LoadNetworkFromFile(currentDirectory);
         }
 
         private PointF _lastPoint;
@@ -23,12 +23,20 @@ namespace DigitRecognizer
         {
             DrawableInstance.Undo();
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         private void OnRedoClicked(object sender, EventArgs e)
         {
             DrawableInstance.Redo();
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
 
@@ -46,6 +54,10 @@ namespace DigitRecognizer
                 DrawableInstance.DrawDot(point);
                 CanvasView.Invalidate();
             }
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         private void OnCanvasPointerMoved(object sender, TouchEventArgs e)
@@ -63,9 +75,8 @@ namespace DigitRecognizer
                 if (_isDragging)
                 {
                     DrawableInstance.AddPoint(point);
+                    CanvasView.Invalidate();
                 }
-
-                CanvasView.Invalidate();
             }
         }
 
@@ -77,6 +88,10 @@ namespace DigitRecognizer
             }
 
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         public void OnClearClicked(object sender, EventArgs e)

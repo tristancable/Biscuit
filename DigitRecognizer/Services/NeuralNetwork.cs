@@ -2,8 +2,8 @@
 {
     public class NeuralNetwork
     {
-        public readonly Layer[] layers;
-        public readonly int[] layerSizes;
+        public Layer[] layers;
+        public int[] layerSizes;
 
         public ICost cost;
         System.Random rng;
