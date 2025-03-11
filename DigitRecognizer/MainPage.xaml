@@ -49,7 +49,7 @@
                     <ImageButton Source="ink_eraser.png" Clicked="OnEraserClicked" WidthRequest="40" HeightRequest="40"/>
 
                     <!-- Brush Size Slider -->
-                    <Slider Minimum="1" Maximum="50" Value="5" 
+                    <Slider Minimum="1" Maximum="50" Value="30" 
                             ValueChanged="OnBrushSizeChanged" 
                             WidthRequest="200" HeightRequest="40" 
                             VerticalOptions="Center" />

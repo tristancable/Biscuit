@@ -6,7 +6,7 @@ public class DrawingCanvas : IDrawable
     private List<Circle> _circles = new List<Circle>();
     private Line _currentLine;
     private bool isEraser = false;
-    private int currentBrushSize = 5;
+    private int currentBrushSize = 30;
     private bool isCircleMode = false;
 
     // Undo/Redo stacks
