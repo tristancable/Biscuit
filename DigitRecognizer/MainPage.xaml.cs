@@ -1,4 +1,5 @@
-﻿using DigitRecognizer.Services;
+﻿using System.Diagnostics;
+using DigitRecognizer.Services;
 using SkiaSharp;
 namespace DigitRecognizer
 {
@@ -21,13 +22,20 @@ namespace DigitRecognizer
         {
             DrawableInstance.Undo();
             CanvasView.Invalidate();
-            double[] data = DrawableInstance.GetPixelData(500, 500);
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         private void OnRedoClicked(object sender, EventArgs e)
         {
             DrawableInstance.Redo();
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
 
@@ -45,6 +53,10 @@ namespace DigitRecognizer
                 DrawableInstance.DrawDot(point);
                 CanvasView.Invalidate();
             }
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         private void OnCanvasPointerMoved(object sender, TouchEventArgs e)
@@ -62,9 +74,8 @@ namespace DigitRecognizer
                 if (_isDragging)
                 {
                     DrawableInstance.AddPoint(point);
+                    CanvasView.Invalidate();
                 }
-
-                CanvasView.Invalidate();
             }
         }
 
@@ -76,6 +87,10 @@ namespace DigitRecognizer
             }
 
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData((int)CanvasView.Width, (int)CanvasView.Height);
+            (int prediction, double[] outputs) = network.Classify(data);
+            NeuralNetwork.Text = prediction + "\n";
+            outputs.ToList().ForEach(o => NeuralNetwork.Text += o + "\n");
         }
 
         public void OnClearClicked(object sender, EventArgs e)
