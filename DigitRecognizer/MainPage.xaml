@@ -1,8 +1,24 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:DigitRecognizer"
-             x:Class="DigitRecognizer.MainPage">
+             x:Class="DigitRecognizer.MainPage"
+             Title="">
 
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File">
+            <MenuFlyoutItem Text="Undo" Clicked="OnUndoClicked">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Ctrl" Key="Z"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Redo" Clicked="OnRedoClicked">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Ctrl" Key="Y"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -31,10 +47,6 @@
                 <StackLayout Grid.Row="0" Orientation="Horizontal" BackgroundColor="DarkGray" Padding="5">
                     <ImageButton Source="brush.png" Clicked="OnPencilClicked" WidthRequest="40" HeightRequest="40"/>
                     <ImageButton Source="ink_eraser.png" Clicked="OnEraserClicked" WidthRequest="40" HeightRequest="40"/>
-                    <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="Center">
-                        <Button Text="Undo" Clicked="OnUndoClicked" FontSize="18" WidthRequest="150" Margin="5"/>
-                        <Button Text="Redo" Clicked="OnRedoClicked" FontSize="18" WidthRequest="150" Margin="5"/>
-                    </StackLayout>
 
                     <!-- Brush Size Slider -->
                     <Slider Minimum="1" Maximum="50" Value="5" 
