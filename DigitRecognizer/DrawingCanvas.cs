@@ -1,4 +1,6 @@
-﻿public class DrawingCanvas : IDrawable
+﻿using SkiaSharp;
+
+public class DrawingCanvas : IDrawable
 {
     private List<Line> _lines = new List<Line>();
     private List<Circle> _circles = new List<Circle>();
@@ -217,5 +219,65 @@
     {
         Line,
         Circle
+    }
+    public double[] GetPixelData(int width, int height)
+    {
+        // Create an SKBitmap with the specified width and height
+        using (var skBitmap = new SKBitmap(width, height))
+        {
+            // Create a SkiaSharp canvas to draw on the bitmap
+            using (var skCanvas = new SKCanvas(skBitmap))
+            {
+                // Clear the canvas with white background
+                skCanvas.Clear(SKColors.White);
+
+                // Set up SkiaSharp paint for lines
+                var paint = new SKPaint
+                {
+                    IsAntialias = true,
+                    StrokeCap = SKStrokeCap.Round,
+                    StrokeJoin = SKStrokeJoin.Round
+                };
+
+                // Render lines
+                foreach (var line in _lines)
+                {
+                    if (line.Points.Count < 2) continue;
+
+                    paint.StrokeWidth = line.BrushSize;
+                    paint.Color = line.IsEraser ? SKColors.LightGray : SKColors.Black;
+
+                    var points = line.Points.Select(p => new SKPoint(p.X, p.Y)).ToArray();
+                    skCanvas.DrawPoints(SKPointMode.Polygon, points, paint);
+                }
+
+                // Render circles (dots)
+                foreach (var circle in _circles)
+                {
+                    paint.Color = circle.IsEraser ? SKColors.LightGray : SKColors.Black;
+                    skCanvas.DrawCircle(circle.Center.X, circle.Center.Y, circle.Radius / 2, paint);
+                }
+            }
+            var resizedBitmap = skBitmap.Resize(new SKImageInfo(28, 28), SKFilterQuality.Medium);
+
+            // Now, we extract pixel data as grayscale values
+            var pixelData = new double[28 * 28];
+            for (int y = 0; y < 28; y++)
+            {
+                for (int x = 0; x < 28; x++)
+                {
+                    // Get the color at the current pixel
+                    SKColor color = resizedBitmap.GetPixel(x, y);
+
+                    // Convert the color to grayscale using the luminosity formula
+                    double grayscale = 0.2989 * color.Red / 255.0 + 0.5870 * color.Green / 255.0 + 0.1140 * color.Blue / 255.0;
+
+                    // Store the grayscale value in the array
+                    pixelData[y * 28 + x] = 1 - grayscale;
+                }
+            }
+
+            return pixelData;
+        }
     }
 }

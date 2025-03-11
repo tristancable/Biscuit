@@ -1,10 +1,5 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Controls.Xaml;
-using System;
-using System.Linq;
-using DigitRecognizer.Services;
-
+﻿using DigitRecognizer.Services;
+using SkiaSharp;
 namespace DigitRecognizer
 {
     public partial class MainPage : ContentPage
@@ -16,7 +11,7 @@ namespace DigitRecognizer
         {
             InitializeComponent();
             CanvasView.Drawable = (Microsoft.Maui.Graphics.IDrawable)DrawableInstance;
-            //network = NetworkSaveData.LoadNetworkFromFile("C:\\Neumont\\Q6\\PRO200\\Biscuit\\DigitRecognizer\\Resources\\MNIST Model\\Mnist Net.json");
+            network = NetworkSaveData.LoadNetworkFromFile("C:\\Neumont\\Q6\\PRO200\\Biscuit\\DigitRecognizer\\Resources\\MNIST Model\\Mnist Net.json");
         }
 
         private PointF _lastPoint;
@@ -26,6 +21,7 @@ namespace DigitRecognizer
         {
             DrawableInstance.Undo();
             CanvasView.Invalidate();
+            double[] data = DrawableInstance.GetPixelData(500, 500);
         }
 
         private void OnRedoClicked(object sender, EventArgs e)
